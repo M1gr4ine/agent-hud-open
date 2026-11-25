@@ -182,6 +182,8 @@ pub enum Launch {
     CommandArgs,
     /// A PowerShell line in `commandWindows`, beside the POSIX command.
     PowerShell,
+    /// A PowerShell command for clients that use `command` on every OS.
+    PowerShellCommand,
     /// `exec` and `args` in place of the handler's command.
     ExecArgs,
 }

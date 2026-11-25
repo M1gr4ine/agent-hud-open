@@ -1,8 +1,8 @@
 //! Antigravity's completion and session-origin hooks, kept in Agent HUD's own
 //! `agent-hud` entry. Its permissions are observed natively (`permissions.rs`),
 //! not through hooks.
-use crate::hooks::{Completed, Completion, Hooks, Layout, POSIX_ONLY};
-use crate::{text, HookEvent, Location};
+use crate::hooks::{Completed, Completion, Hooks, Launch, Layout};
+use crate::{text, HookEvent, Location, PerOs, Support};
 use serde_json::{json, Value};
 
 pub static HOOKS: Hooks = Hooks {
@@ -28,7 +28,11 @@ pub static HOOKS: Hooks = Hooks {
     compaction: None,
     rewake: None,
     prefixed_sessions: true,
-    launch: POSIX_ONLY,
+    launch: PerOs {
+        macos: Support::Verified(Launch::Command),
+        windows: Support::Unverified(Launch::PowerShellCommand),
+        linux: Support::Unverified(Launch::Command),
+    },
 };
 
 /// A conversation that stopped without a tool call, fully idle and without

@@ -84206,7 +84206,15 @@
     },
     "output": {
       "install": {
-        "error": "antigravity has no verified Windows hook launch contract; its configuration was not changed"
+        "agent-hud": {
+          "Stop": [
+            {
+              "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand WwBDAG8AbgBzAG8AbABlAF0AOgA6AE8AdQB0AHAAdQB0AEUAbgBjAG8AZABpAG4AZwA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AVQBUAEYAOABFAG4AYwBvAGQAaQBuAGcAXQA6ADoAbgBlAHcAKAAkAGYAYQBsAHMAZQApADsAIAAmACAAJwBDADoAXABQAHIAbwBnAHIAYQBtACAARgBpAGwAZQBzAFwAQQBnAGUAbgB0ACAASABVAEQAXABhAGcAZQBuAHQALQBoAHUAZAAuAGUAeABlACcAIAAtAC0AYwBvAG0AcABsAGUAdABpAG8AbgAtAGgAbwBvAGsAIABhAG4AdABpAGcAcgBhAHYAaQB0AHkA",
+              "timeout": 5,
+              "type": "command"
+            }
+          ]
+        }
       },
       "remove": {}
     }
@@ -84223,7 +84231,22 @@
     },
     "output": {
       "install": {
-        "error": "antigravity has no verified Windows hook launch contract; its configuration was not changed"
+        "agent-hud": {
+          "PreInvocation": [
+            {
+              "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand WwBDAG8AbgBzAG8AbABlAF0AOgA6AE8AdQB0AHAAdQB0AEUAbgBjAG8AZABpAG4AZwA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AVQBUAEYAOABFAG4AYwBvAGQAaQBuAGcAXQA6ADoAbgBlAHcAKAAkAGYAYQBsAHMAZQApADsAIAAmACAAJwBDADoAXABQAHIAbwBnAHIAYQBtACAARgBpAGwAZQBzAFwAQQBnAGUAbgB0ACAASABVAEQAXABhAGcAZQBuAHQALQBoAHUAZAAuAGUAeABlACcAIAAtAC0AcwBlAHMAcwBpAG8AbgAtAG8AcgBpAGcAaQBuAC0AaABvAG8AawAgAGEAbgB0AGkAZwByAGEAdgBpAHQAeQA=",
+              "timeout": 5,
+              "type": "command"
+            }
+          ],
+          "SessionStart": [
+            {
+              "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand WwBDAG8AbgBzAG8AbABlAF0AOgA6AE8AdQB0AHAAdQB0AEUAbgBjAG8AZABpAG4AZwA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AVQBUAEYAOABFAG4AYwBvAGQAaQBuAGcAXQA6ADoAbgBlAHcAKAAkAGYAYQBsAHMAZQApADsAIAAmACAAJwBDADoAXABQAHIAbwBnAHIAYQBtACAARgBpAGwAZQBzAFwAQQBnAGUAbgB0ACAASABVAEQAXABhAGcAZQBuAHQALQBoAHUAZAAuAGUAeABlACcAIAAtAC0AcwBlAHMAcwBpAG8AbgAtAG8AcgBpAGcAaQBuAC0AaABvAG8AawAgAGEAbgB0AGkAZwByAGEAdgBpAHQAeQA=",
+              "timeout": 5,
+              "type": "command"
+            }
+          ]
+        }
       },
       "remove": {}
     }
@@ -93196,7 +93219,15 @@
     },
     "output": {
       "install": {
-        "error": "antigravity has no verified Windows hook launch contract; its configuration was not changed"
+        "agent-hud": {
+          "Stop": [
+            {
+              "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand WwBDAG8AbgBzAG8AbABlAF0AOgA6AE8AdQB0AHAAdQB0AEUAbgBjAG8AZABpAG4AZwA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AVQBUAEYAOABFAG4AYwBvAGQAaQBuAGcAXQA6ADoAbgBlAHcAKAAkAGYAYQBsAHMAZQApADsAIAAmACAAJwBDADoAXABQAHIAbwBnAHIAYQBtACAARgBpAGwAZQBzAFwAQQBnAGUAbgB0ACAASABVAEQAXABhAGcAZQBuAHQALQBoAHUAZAAuAGUAeABlACcAIAAtAC0AYwBvAG0AcABsAGUAdABpAG8AbgAtAGgAbwBvAGsAIABhAG4AdABpAGcAcgBhAHYAaQB0AHkA",
+              "timeout": 5,
+              "type": "command"
+            }
+          ]
+        }
       },
       "remove": {}
     }
@@ -93242,7 +93273,22 @@
     },
     "output": {
       "install": {
-        "error": "antigravity has no verified Windows hook launch contract; its configuration was not changed"
+        "agent-hud": {
+          "PreInvocation": [
+            {
+              "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand WwBDAG8AbgBzAG8AbABlAF0AOgA6AE8AdQB0AHAAdQB0AEUAbgBjAG8AZABpAG4AZwA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AVQBUAEYAOABFAG4AYwBvAGQAaQBuAGcAXQA6ADoAbgBlAHcAKAAkAGYAYQBsAHMAZQApADsAIAAmACAAJwBDADoAXABQAHIAbwBnAHIAYQBtACAARgBpAGwAZQBzAFwAQQBnAGUAbgB0ACAASABVAEQAXABhAGcAZQBuAHQALQBoAHUAZAAuAGUAeABlACcAIAAtAC0AcwBlAHMAcwBpAG8AbgAtAG8AcgBpAGcAaQBuAC0AaABvAG8AawAgAGEAbgB0AGkAZwByAGEAdgBpAHQAeQA=",
+              "timeout": 5,
+              "type": "command"
+            }
+          ],
+          "SessionStart": [
+            {
+              "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand WwBDAG8AbgBzAG8AbABlAF0AOgA6AE8AdQB0AHAAdQB0AEUAbgBjAG8AZABpAG4AZwA9AFsAUwB5AHMAdABlAG0ALgBUAGUAeAB0AC4AVQBUAEYAOABFAG4AYwBvAGQAaQBuAGcAXQA6ADoAbgBlAHcAKAAkAGYAYQBsAHMAZQApADsAIAAmACAAJwBDADoAXABQAHIAbwBnAHIAYQBtACAARgBpAGwAZQBzAFwAQQBnAGUAbgB0ACAASABVAEQAXABhAGcAZQBuAHQALQBoAHUAZAAuAGUAeABlACcAIAAtAC0AcwBlAHMAcwBpAG8AbgAtAG8AcgBpAGcAaQBuAC0AaABvAG8AawAgAGEAbgB0AGkAZwByAGEAdgBpAHQAeQA=",
+              "timeout": 5,
+              "type": "command"
+            }
+          ]
+        }
       },
       "remove": {}
     }

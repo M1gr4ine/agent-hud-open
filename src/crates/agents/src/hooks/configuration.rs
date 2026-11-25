@@ -190,7 +190,13 @@ pub fn hook_commands(
                 optional_array(&entry, event)?
                     .iter()
                     .filter_map(|h| h["command"].as_str())
-                    .filter(|c| owns(Some(c), source, hooks, flag))
+                    .filter(|c| {
+                        owns(Some(c), source, hooks, flag)
+                            || (matches!(
+                                hooks.launch.windows.value(),
+                                Some(super::Launch::PowerShellCommand)
+                            ) && c.starts_with(super::windows::POWERSHELL_COMMAND_PREFIX))
+                    })
                     .map(str::to_owned),
             );
         }

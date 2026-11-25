@@ -5,6 +5,9 @@ use super::configuration::{configuration, patch_configuration};
 use super::{hooks_of, Launch};
 use serde_json::{json, Value};
 
+pub(super) const POWERSHELL_COMMAND_PREFIX: &str =
+    "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand ";
+
 /// Render one handler using the client's Windows launch contract. Both public
 /// callbacks and product-specific callbacks use this representation.
 pub fn windows_hook_handler(source: &str, flag: &str, executable: &str) -> Result<Value, String> {
@@ -25,6 +28,9 @@ pub fn windows_hook_handler(source: &str, flag: &str, executable: &str) -> Resul
             "type": "command", "command": executable, "args": [flag, source]
         })),
         Some(Launch::ExecArgs) => Ok(json!({"exec": executable, "args": [flag, source]})),
+        Some(Launch::PowerShellCommand) => Ok(json!({
+            "type": "command", "command": powershell(executable, flag, source)
+        })),
         Some(Launch::PowerShell) => Ok(json!({
             "type": "command",
             "command": format!("'{}' {flag} {source}", executable.replace('\'', "'\\''")),
@@ -46,6 +52,15 @@ pub fn patch_configuration_for_windows(
     let launch = hooks.launch.windows.value();
     if launch.is_none() && executable.is_some() {
         return Err(format!("{source} has no verified Windows hook launch contract; its configuration was not changed"));
+    }
+    if matches!(launch, Some(Launch::PowerShellCommand)) {
+        let handler = executable
+            .map(|path| windows_hook_handler(source, flag, path))
+            .transpose()?;
+        let command = handler
+            .as_ref()
+            .and_then(|handler| handler["command"].as_str());
+        return patch_configuration(source, flag, current, command);
     }
     // A client launched with `exec` lists its handlers under the event; the
     // others group them.
@@ -145,7 +160,7 @@ fn powershell(executable: &str, flag: &str, source: &str) -> String {
         .flat_map(u16::to_le_bytes)
         .collect::<Vec<_>>();
     format!(
-        "powershell.exe -NoLogo -NoProfile -NonInteractive -EncodedCommand {}",
+        "{POWERSHELL_COMMAND_PREFIX}{}",
         base64::engine::general_purpose::STANDARD.encode(bytes)
     )
 }
@@ -154,6 +169,82 @@ fn powershell(executable: &str, flag: &str, source: &str) -> String {
 mod tests {
     use super::*;
     use base64::Engine;
+
+    #[test]
+    fn antigravity_windows_commands_are_scoped_to_the_owned_group() {
+        let original =
+            json!({"fons-pool":{"Stop":[{"command":"node scripts/bootstrap-hook.mjs"}]}});
+        let exe = r"D:\开发\O'Brien\Agent HUD.exe";
+        let origin = "--session-origin-hook";
+        let stop = "--completion-hook";
+        let event = super::super::events::parse_event(
+            "antigravity",
+            origin,
+            &json!({"conversationId":"fixture","hookEventName":"PreInvocation"}),
+            123,
+        )
+        .unwrap()
+        .unwrap();
+        assert_eq!(event.data["eventName"], "PreInvocation");
+
+        let with_stop =
+            patch_configuration_for_windows("antigravity", stop, &original, Some(exe)).unwrap();
+        let installed =
+            patch_configuration_for_windows("antigravity", origin, &with_stop, Some(exe)).unwrap();
+        assert_eq!(installed["fons-pool"], original["fons-pool"]);
+        for (event, flag) in [
+            ("Stop", stop),
+            ("SessionStart", origin),
+            ("PreInvocation", origin),
+        ] {
+            let handler = &installed["agent-hud"][event][0];
+            assert_eq!(handler["type"], "command");
+            assert!(handler.get("commandWindows").is_none());
+            let command = handler["command"].as_str().unwrap();
+            let encoded = command.split_whitespace().last().unwrap();
+            let bytes = base64::engine::general_purpose::STANDARD
+                .decode(encoded)
+                .unwrap();
+            let units = bytes
+                .chunks_exact(2)
+                .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
+                .collect::<Vec<_>>();
+            let payload = String::from_utf16(&units).unwrap();
+            assert!(payload.ends_with(&format!("'{}' {flag} antigravity", exe.replace('\'', "''"))));
+        }
+        assert_eq!(
+            super::super::configuration::hook_commands("antigravity", origin, &installed)
+                .unwrap()
+                .len(),
+            2
+        );
+        assert_eq!(
+            patch_configuration_for_windows("antigravity", origin, &installed, Some(exe)).unwrap(),
+            installed
+        );
+        let migrated = patch_configuration_for_windows(
+            "antigravity",
+            stop,
+            &installed,
+            Some(r"E:\Agent HUD.exe"),
+        )
+        .unwrap();
+        assert_ne!(
+            migrated["agent-hud"]["Stop"],
+            installed["agent-hud"]["Stop"]
+        );
+        assert_eq!(
+            migrated["agent-hud"]["SessionStart"],
+            installed["agent-hud"]["SessionStart"]
+        );
+        let without_origin =
+            patch_configuration_for_windows("antigravity", origin, &installed, None).unwrap();
+        assert_eq!(without_origin, with_stop);
+        assert_eq!(
+            patch_configuration_for_windows("antigravity", stop, &without_origin, None).unwrap(),
+            original
+        );
+    }
 
     #[test]
     fn remote_callbacks_use_the_same_windows_launch_contract() {

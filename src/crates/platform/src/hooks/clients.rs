@@ -285,10 +285,7 @@ mod tests {
 
     #[test]
     fn hooks_go_in_only_where_the_client_can_launch_them() {
-        // Antigravity's hooks run as a POSIX command, which Windows lacks.
-        assert!(!super::launches("antigravity", Os::Windows));
-        assert!(super::launches("antigravity", Os::MacOs));
-        for client in ["claude", "codex"] {
+        for client in ["antigravity", "claude", "codex"] {
             assert!(super::launches(client, Os::Windows), "{client}");
             assert!(super::launches(client, Os::MacOs), "{client}");
         }

@@ -71,15 +71,17 @@ pub fn parse_event(
                 let Some(session) = text(&payload["conversationId"]) else {
                     return Ok(None);
                 };
-                let event_name = text(&payload["hook_event_name"]).unwrap_or(
-                    if payload.get("invocationNum").is_some()
-                        || payload.get("initialNumSteps").is_some()
-                    {
-                        "PreInvocation"
-                    } else {
-                        "SessionStart"
-                    },
-                );
+                let event_name = text(&payload["hookEventName"])
+                    .or_else(|| text(&payload["hook_event_name"]))
+                    .unwrap_or(
+                        if payload.get("invocationNum").is_some()
+                            || payload.get("initialNumSteps").is_some()
+                        {
+                            "PreInvocation"
+                        } else {
+                            "SessionStart"
+                        },
+                    );
                 if !matches!(event_name, "SessionStart" | "PreInvocation") {
                     return Ok(None);
                 }
