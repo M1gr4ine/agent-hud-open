@@ -7,6 +7,7 @@ impl Messaging {
         caller: &Caller,
         arguments: &Value,
         host: &Host<'_>,
+        extras: &[Value],
         now: i64,
     ) -> Result<Value> {
         let language = language(host.snapshot);
@@ -31,7 +32,7 @@ impl Messaging {
             Err(reason) => return Ok(refused(&reason)),
         };
         let provider = provider(client);
-        let offers = self.starts.offers_for(&all_sessions(host.snapshot));
+        let offers = self.offers_for_caller(Some(caller), host, extras);
         let Some(offer) = offers.iter().find(|offer| offer.provider == provider) else {
             return Ok(refused(&if client == "deepseek" {
                 words::deepseek_cannot_start(language)
@@ -39,13 +40,8 @@ impl Messaging {
                 words::cannot_start(language, client)
             }));
         };
-        let folder = match arguments["folder"].as_str() {
-            Some(folder) => folder.to_owned(),
-            None => find_in(host.snapshot, &caller.client, &caller.session_id)
-                .and_then(|session| session["cwd"].as_str())
-                .and_then(|cwd| self.starts.offered_folder(cwd))
-                .unwrap_or_default(),
-        };
+        let caller_cwd = self.caller_cwd(caller, host, extras);
+        let folder = self.resolve_start_folder(offer, caller_cwd, arguments["folder"].as_str());
         let offered = if folder.is_empty() {
             offer.without_folder
         } else {

@@ -14,6 +14,9 @@ impl Messaging {
         if preferences.steer_on_own {
             steer_choice(&mut tools);
         }
+        if preferences.prefer_new_session {
+            fresh_session_choice(&mut tools);
+        }
         tools
     }
 
@@ -91,5 +94,41 @@ fn steer_choice(tools: &mut Value) {
         tool["description"] = json!(description);
         let delivery = &mut tool["inputSchema"]["properties"]["delivery"]["description"];
         *delivery = json!(words(delivery.as_str().unwrap_or_default()));
+    }
+}
+
+/// "Start a new session for new tasks" is on: guide agents to prefer
+/// `start_session` in their current project over reusing old sessions, and
+/// expose `reuse_existing` on `send_message` for explicit user overrides.
+fn fresh_session_choice(tools: &mut Value) {
+    for tool in tools["tools"].as_array_mut().into_iter().flatten() {
+        let name = tool["name"].as_str().unwrap_or_default().to_owned();
+        let description = tool["description"].as_str().unwrap_or_default().to_owned();
+        match name.as_str() {
+            "list_sessions" => {
+                tool["description"] = json!(format!(
+                    "{description} For a new task, prefer starting a fresh session in your current project with start_session (startFolders includes your current project wherever the client accepts it) rather than picking an old session."
+                ));
+            }
+            "start_session" => {
+                let updated = description.replace(
+                    "in a folder the user already works in with that client (startFolders in list_sessions; an empty folder starts it in its own task folder)",
+                    "in your current project folder (or another folder in startFolders; an empty folder starts it in its own task folder), even if that client has not opened your project before",
+                );
+                tool["description"] = json!(format!(
+                    "Preferred for starting a new task or first contacting another agent so tasks stay isolated in separate sessions rather than reusing old context. {updated} If the user asked for a specific model that cannot be chosen at start (atStart: false), report to the user instead of falling back to an old or different-project session."
+                ));
+            }
+            "send_message" => {
+                tool["description"] = json!(format!(
+                    "Use send_message to reply (reply_to), follow up with a session you already started or messaged for this task, or message clients that cannot start new sessions. Do NOT reuse an old or different-project session for a new task — use start_session in your current project instead. {description}"
+                ));
+                tool["inputSchema"]["properties"]["reuse_existing"] = json!({
+                    "type": "boolean",
+                    "description": "Set to true only when the user explicitly asked to message a specific existing session (such as one they just created or named). Leave out for replies and ongoing collaborations; never set it on your own to reuse an old session."
+                });
+            }
+            _ => {}
+        }
     }
 }

@@ -16,6 +16,7 @@
 //! an answer is read again from the other session's transcript each time.
 mod extras;
 mod flights;
+mod fresh;
 mod journal;
 mod listing;
 mod models;
@@ -247,7 +248,7 @@ impl Messaging {
                 let answer = if name == "send_message" {
                     self.send(&caller, arguments, host, &extras, now)
                 } else {
-                    self.start(&caller, arguments, host, now)
+                    self.start(&caller, arguments, host, &extras, now)
                 };
                 self.calling = None;
                 answer

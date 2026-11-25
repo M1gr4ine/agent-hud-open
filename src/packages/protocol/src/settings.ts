@@ -142,6 +142,8 @@ export interface AppSettings {
   agentMessagesRequireReply?: boolean;
   /** Agents steer on their own to correct a turn in progress; off unless turned on. */
   agentMessagesSteerOnOwn?: boolean;
+  /** Prefer starting a fresh same-project session over reusing an old session for new tasks; on unless turned off. */
+  agentMessagesPreferNewSession?: boolean;
   /** Passes in a row with no word from the user before agents' messages stop; null for no limit. */
   agentMessagesLimit?: number | null;
   /** Messages may go into Claude Code sessions through Agent HUD's plugin; on unless turned off. */

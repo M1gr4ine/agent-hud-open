@@ -92,6 +92,12 @@ impl SessionStarts {
     pub fn offered_folder(&self, cwd: &str) -> Option<String> {
         self.project_folder(cwd).map(|folder| self.written(&folder))
     }
+    /// The folder `cwd` names when it exists on disk and `provider` accepts it,
+    /// written the same way `offers_for` writes offered folders.
+    pub fn accepted_folder(&self, provider: Provider, cwd: &str) -> Option<String> {
+        let folder = self.project_folder(cwd)?;
+        (folder.is_dir() && self.accepts(provider, &folder)).then(|| self.written(&folder))
+    }
     pub fn update_offers_ref(&self) -> &[StartOffer] {
         &self.offers
     }

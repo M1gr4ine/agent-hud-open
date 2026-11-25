@@ -100,9 +100,20 @@ impl Messaging {
         if !target["parentId"].is_null() {
             return Ok(refused(&words::child(language)));
         }
-        // Only a client that takes a message into a turn in progress gets a
-        // steer (Open #68); a reply is always queued, and a session waiting on
-        // an approval or a question would not read one until it is answered.
+        if let Some(reason) = self.check_fresh_session(
+            caller,
+            client,
+            to,
+            target,
+            replied.is_some() || steer,
+            arguments,
+            host,
+            extras,
+            language,
+        ) {
+            return Ok(refused(&reason));
+        }
+        // Only a steer-capable client takes a steer (Open #68); replies queue.
         if steer {
             if !Provider::parse(client).is_some_and(Provider::takes_steer) {
                 return Ok(refused(&words::steer_unsupported(language, client)));
@@ -312,22 +323,6 @@ impl Messaging {
         match parent {
             Some(parent) => (Some(parent.chain.clone()), parent.count + 1),
             None => (None, 1),
-        }
-    }
-
-    /// How a message goes in, and whether its last line asks for a reply.
-    /// The user's "Send as me" makes it their own words, except a `labelled`
-    /// one (a steer). With "Ask for replies only when needed" the sender's
-    /// `require_reply` decides the reply line, and a message that needs a
-    /// reply is labelled under "Send as me" too: the recipient has to know
-    /// whom it answers. Without it every labelled message asks.
-    pub(crate) fn shape(&self, arguments: &Value, labelled: bool) -> (PromptForm, bool) {
-        let ask = !self.preferences.require_reply || arguments["require_reply"] == true;
-        let own = self.preferences.as_user && !labelled && !(self.preferences.require_reply && ask);
-        if own {
-            (PromptForm::Own, false)
-        } else {
-            (PromptForm::Labelled, ask)
         }
     }
 }

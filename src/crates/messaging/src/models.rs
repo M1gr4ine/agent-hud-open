@@ -57,6 +57,25 @@ impl Messaging {
             return Err(words::model_per_message(language, client));
         }
         if !per_message && !self.starts.model_at_start(provider) {
+            if let Ok(listed) = self.starts.models(provider) {
+                let resolved = listed.resolve(asked);
+                if let (Some(resolved), Some(default)) = (&resolved, &listed.default) {
+                    if resolved.eq_ignore_ascii_case(default) {
+                        return Ok(None);
+                    }
+                    return Err(words::model_at_start_default(
+                        language, client, asked, default,
+                    ));
+                }
+                if resolved.is_none() {
+                    return Err(words::unknown_model(language, client, asked));
+                }
+                if let Some(default) = &listed.default {
+                    return Err(words::model_at_start_default(
+                        language, client, asked, default,
+                    ));
+                }
+            }
             return Err(words::model_at_start(language, client));
         }
         let listed = self

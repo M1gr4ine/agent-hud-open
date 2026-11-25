@@ -25,6 +25,11 @@ pub(crate) fn is_path_key(key: &str) -> bool {
     key.eq_ignore_ascii_case("PATH")
 }
 
+/// Whether two folder spellings name the same path on Windows.
+pub fn same_folder_name(a: &str, b: &str) -> bool {
+    a.eq_ignore_ascii_case(b)
+}
+
 /// Where command lines are installed that a GUI app's `PATH` lacks: npm's
 /// global folder under `%APPDATA%`.
 pub(crate) fn command_folders() -> Vec<PathBuf> {

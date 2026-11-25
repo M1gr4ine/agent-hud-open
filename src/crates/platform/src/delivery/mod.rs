@@ -49,7 +49,7 @@ pub use codex::{
 pub use deepseek::DeepSeekChannel;
 pub use files::atomic_json;
 pub use handoffs::Handoffs;
-pub use host::private_dir;
+pub use host::{private_dir, same_folder_name};
 use serde::{Deserialize, Serialize};
 pub use service::hook_session_key;
 use service::valid_session_id;

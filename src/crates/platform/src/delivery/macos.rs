@@ -1,7 +1,7 @@
 //! What sending and starting need from macOS: Unix's private files and
 //! command lines, the folders apps are installed in, and `open` for links.
-pub use super::unix::private_dir;
 pub(crate) use super::unix::{command_folders, is_path_key, new_file_options};
+pub use super::unix::{private_dir, same_folder_name};
 use super::Result;
 use std::path::{Path, PathBuf};
 

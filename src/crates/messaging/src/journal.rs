@@ -135,6 +135,22 @@ impl Journal {
                 && message.state != "refused"
         })
     }
+    /// Whether two sessions have already exchanged a non-refused message (or
+    /// one started the other) in the kept journal window.
+    pub fn exchanged(&self, a: (&str, &str), b: (&str, &str)) -> bool {
+        self.messages.iter().any(|message| {
+            if message.state == "refused" || message.to.session_id.is_empty() {
+                return false;
+            }
+            let from = (
+                message.from.client.as_str(),
+                message.from.session_id.as_str(),
+            );
+            let to = (message.to.client.as_str(), message.to.session_id.as_str());
+            (super::same_identity(from, a) && super::same_identity(to, b))
+                || (super::same_identity(from, b) && super::same_identity(to, a))
+        })
+    }
     /// Messages not yet answered nor ended without one.
     pub fn pending(&self) -> bool {
         self.messages.iter().any(|message| {

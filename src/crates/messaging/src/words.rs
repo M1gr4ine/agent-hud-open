@@ -6,6 +6,8 @@ use agent_hud_platform::delivery::PromptForm;
 
 mod delivery;
 pub use delivery::*;
+mod fresh;
+pub use fresh::*;
 mod models;
 pub use models::*;
 mod steer;

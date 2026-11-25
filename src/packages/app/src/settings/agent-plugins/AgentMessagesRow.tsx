@@ -49,6 +49,7 @@ export function AgentMessagesRow({
     limit !== null && !LIMITS.includes(limit) ? [...LIMITS, limit] : LIMITS;
   const asMe = t("Send as me");
   const askWhenNeeded = t("Ask for replies only when needed");
+  const preferNewSession = t("Start a new session for new tasks");
   const steerOnOwn = t("Let agents decide when to steer");
   return (
     <>
@@ -88,6 +89,21 @@ export function AgentMessagesRow({
             checked={settings.agentMessagesRequireReply !== false}
             disabled={pending}
             onCheckedChange={(value) => set("agentMessagesRequireReply", value)}
+          />
+        </Row>
+        <Row
+          title={preferNewSession}
+          subtitle={t(
+            "Prefer a fresh same-project session over reusing an old session's context.",
+          )}
+        >
+          <Switch
+            aria-label={preferNewSession}
+            checked={settings.agentMessagesPreferNewSession !== false}
+            disabled={pending}
+            onCheckedChange={(value) =>
+              set("agentMessagesPreferNewSession", value)
+            }
           />
         </Row>
         {/* Off unless turned on: an agent then interrupts another session's

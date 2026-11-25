@@ -2952,6 +2952,7 @@ fn an_antigravity_answer_the_store_cannot_tie_to_the_message_flies_only_its_repl
 fn every_message_asks() -> Preferences {
     Preferences {
         require_reply: false,
+        prefer_new_session: false,
         ..Default::default()
     }
 }
@@ -2964,6 +2965,7 @@ impl Preferences {
             "agentMessagesAsUser": self.as_user,
             "agentMessagesRequireReply": self.require_reply,
             "agentMessagesSteerOnOwn": self.steer_on_own,
+            "agentMessagesPreferNewSession": self.prefer_new_session,
             "agentMessagesLimit": self.limit,
             "claudeMessages": self.claude,
             "deepseekMessages": self.deepseek,
@@ -3281,5 +3283,6 @@ fn reply_to_unindexed_codex_sender_requires_live_non_archived_root_thread() {
 }
 
 mod calls;
+mod fresh;
 mod models;
 mod steer;

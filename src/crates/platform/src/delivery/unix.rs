@@ -28,6 +28,11 @@ pub(crate) fn is_path_key(key: &str) -> bool {
     key == "PATH"
 }
 
+/// Whether two folder spellings name the same path on Unix.
+pub fn same_folder_name(a: &str, b: &str) -> bool {
+    a == b
+}
+
 /// Where command lines are installed that a GUI app's `PATH` lacks: Homebrew's
 /// folder and `/usr/local/bin`.
 pub(crate) fn command_folders() -> Vec<PathBuf> {
