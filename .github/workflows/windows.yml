@@ -2,6 +2,11 @@ name: Windows desktop
 
 on:
   workflow_dispatch:
+    inputs:
+      installed_exe:
+        description: Installed Windows Agent HUD.exe path delegated for hooks and approval observers
+        required: false
+        default: 'E:\Apps\Agent HUD\Agent HUD.exe'
   push:
     branches: [main, 'codex/windows-*']
   pull_request:
@@ -49,6 +54,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cargo test --workspace --locked --no-fail-fast
       - name: Build Windows NSIS installer
+        env:
+          AGENT_HUD_WINDOWS_INSTALLED_EXE: ${{ inputs.installed_exe || 'E:\Apps\Agent HUD\Agent HUD.exe' }}
         run: pnpm run build:windows -- --bundle
       - name: Record installer provenance and checksum
         run: |
