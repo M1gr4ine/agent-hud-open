@@ -205,9 +205,11 @@ mod tests {
             let bytes = base64::engine::general_purpose::STANDARD
                 .decode(encoded)
                 .unwrap();
-            let units = bytes
-                .chunks_exact(2)
-                .map(|pair| u16::from_le_bytes([pair[0], pair[1]]))
+            let (pairs, remainder) = bytes.as_chunks::<2>();
+            assert!(remainder.is_empty());
+            let units = pairs
+                .iter()
+                .map(|&pair| u16::from_le_bytes(pair))
                 .collect::<Vec<_>>();
             let payload = String::from_utf16(&units).unwrap();
             assert!(payload.ends_with(&format!("'{}' {flag} antigravity", exe.replace('\'', "''"))));
